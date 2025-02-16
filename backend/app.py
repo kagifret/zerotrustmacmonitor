@@ -1,8 +1,10 @@
 from flask import Flask, jsonify
 from system_metrics import get_system_metrics
+from flask_cors import CORS
 
 #the backend is a flask app that acts as a JSON API
 app = Flask(__name__)
+CORS(app) #allows the frontend to request backend
 
 
 @app.route('/api/stats', methods=['GET'])

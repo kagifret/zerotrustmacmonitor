@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [stats, setStats] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/api/stats')
+      .then(response => setStats(response.data))
+      .catch(err => setError(err.message));
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>System Vitals</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {stats ? (
+        <ul>
+          <li>CPU: {stats.cpu}%</li>
+          <li>Memory: {stats.memory}%</li>
+          <li>Disk: {stats.disk}%</li>
+          <li>Processes: {stats.process_count}</li>
+          <li>Network Sent: {stats.network.bytes_sent} bytes</li>
+          <li>Network Received: {stats.network.bytes_recv} bytes</li>
+        </ul>
+      ) : (
+        <p>Loading system stats...</p>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
